@@ -24,50 +24,67 @@ namespace CinemaPR
             InitializeComponent();
         }
         CinemaContext DataBase = new CinemaContext();
+        private List<int> selectedSeats = new List<int>();
 
-        public void GenerateDataGridSeand()
-        {
-            //гениальна логика чтение сеансов добавлние данных по свзм А ПАТОМ СРАЗУ СБОРКА В МОЙ СОЗДАННЫЙ ОБЪЕКТ И ЗАНЕСЕНИЕ В ЛИСт
-            SeansDataGrid.ItemsSource = DataBase.Seans.Include(s => s.FkFilmNavigation).Include(s => s.HallFkNavigation).Select(s => new ObjectCeans
-                {
-                    Sean = s,
-                    FilmName = s.FkFilmNavigation.Names,
-                    Length = s.FkFilmNavigation.Length,
-                    Price = s.Price,
-                    Time = s.DateTime,
-                    HallNumber = s.HallFkNavigation.Id
-                }).ToList();
-        }
+        //public void GenerateDataGridSeand()
+        //{
+        //    //гениальна логика чтение сеансов добавлние данных по свзм А ПАТОМ СРАЗУ СБОРКА В МОЙ СОЗДАННЫЙ ОБЪЕКТ И ЗАНЕСЕНИЕ В ЛИСт
+        //    SeansDataGrid.ItemsSource = DataBase.Seans.Include(s => s.FkFilmNavigation).Include(s => s.HallFkNavigation).Select(s => new ObjectCeans
+        //        {
+        //            Sean = s,
+        //            FilmName = s.FkFilmNavigation.Names,
+        //            Length = s.FkFilmNavigation.Length,
+        //            Price = s.Price,
+        //            Time = s.DateTime,
+        //            HallNumber = s.HallFkNavigation.Id
+        //        }).ToList();
+        //}
 
-        private List<string> GenerateSeatsList(int totalSeats)
+        public void ButtonSeatEvent(object sender, RoutedEventArgs e)
         {
-            List<string> seats = new List<string>();
-    
-            // Просто генерируем номера мест по порядку от 1 до общего количества
-            for (int i = 1; i <= totalSeats; i++)
+            Button clickedButton = (Button)sender;
+            int seatNumber = Convert.ToInt32(clickedButton.Content);
+
+            if(clickedButton.Tag != null && clickedButton.Tag.ToString() == "Active")
             {
-                seats.Add(i.ToString());
+                clickedButton.Tag = "Normal";
+                clickedButton.Background = Brushes.LightGray;
+                selectedSeats.Remove(seatNumber);
             }
-    
-            return seats;
+            else
+            {
+                clickedButton.Tag = "Active";
+                clickedButton.Background = Brushes.LightGreen;
+                selectedSeats.Add(seatNumber);
+            }
         }
-        
 
+        public void GenerateButton(int CountSeat)
+        {
+            for(int i = 0; i <= CountSeat; i++)
+            {
+                Button ButtonSeat = new Button();
+                ButtonSeat.Content = i.ToString();
+                ButtonSeat.Width = 25;
+                ButtonSeat.Height = 25;
+                ButtonSeat.Click += ButtonSeatEvent;
+                ButtonSeat.Resources.Add(typeof(Border), new Style(typeof(Border))
+                {
+                    Setters = { new Setter(Border.CornerRadiusProperty, new CornerRadius(5)) } // Радиус = половина высоты
+                });
+                ButtonSeat.Margin = new Thickness(5);
+                MyContainer.Children.Add(ButtonSeat);
+            }   
+        }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            GenerateDataGridSeand();
+            GenerateButton(120);
         }
 
         private void SeansDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ObjectCeans SelectedSeans = (ObjectCeans)SeansDataGrid.SelectedItem;
-            int TotalCountSeat = SelectedSeans.Sean.HallFkNavigation.CountSeat;
-            //MessageBox.Show(TotalCountSeat.ToString());
-            List<string> generatedSeats = GenerateSeatsList(TotalCountSeat);
-
-            // ИСПРАВЛЕНИЕ: Передаем сгенерированный список в ваш ListBox на экране
-            SeatsListBox.ItemsSource = generatedSeats;
+           
         }
     }
 }
