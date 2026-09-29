@@ -11,6 +11,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CinemaPR
 {
@@ -22,23 +23,24 @@ namespace CinemaPR
         public MainWindow()
         {
             InitializeComponent();
+            GenerateDataGridSeand();
         }
         CinemaContext DataBase = new CinemaContext();
         private List<int> selectedSeats = new List<int>();
 
-        //public void GenerateDataGridSeand()
-        //{
-        //    //гениальна логика чтение сеансов добавлние данных по свзм А ПАТОМ СРАЗУ СБОРКА В МОЙ СОЗДАННЫЙ ОБЪЕКТ И ЗАНЕСЕНИЕ В ЛИСт
-        //    SeansDataGrid.ItemsSource = DataBase.Seans.Include(s => s.FkFilmNavigation).Include(s => s.HallFkNavigation).Select(s => new ObjectCeans
-        //        {
-        //            Sean = s,
-        //            FilmName = s.FkFilmNavigation.Names,
-        //            Length = s.FkFilmNavigation.Length,
-        //            Price = s.Price,
-        //            Time = s.DateTime,
-        //            HallNumber = s.HallFkNavigation.Id
-        //        }).ToList();
-        //}
+        public void GenerateDataGridSeand()
+        {
+            //гениальна логика чтение сеансов добавлние данных по свзм А ПАТОМ СРАЗУ СБОРКА В МОЙ СОЗДАННЫЙ ОБЪЕКТ И ЗАНЕСЕНИЕ В ЛИСт
+            SeansDataGrid.ItemsSource = DataBase.Seans.Include(s => s.FkFilmNavigation).Include(s => s.HallFkNavigation).Select(s => new ObjectCeans
+            {
+                Sean = s,
+                FilmName = s.FkFilmNavigation.Names,
+                Length = s.FkFilmNavigation.Length,
+                Price = s.Price,
+                Time = s.DateTime,
+                HallNumber = s.HallFkNavigation.Id
+            }).ToList();
+        }
 
         public void ButtonSeatEvent(object sender, RoutedEventArgs e)
         {
@@ -61,7 +63,8 @@ namespace CinemaPR
 
         public void GenerateButton(int CountSeat)
         {
-            for(int i = 0; i <= CountSeat; i++)
+            MyContainer.Children.Clear();
+            for (int i = 0; i <= CountSeat; i++)
             {
                 Button ButtonSeat = new Button();
                 ButtonSeat.Content = i.ToString();
@@ -79,12 +82,14 @@ namespace CinemaPR
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            GenerateButton(120);
+           
         }
 
         private void SeansDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           
+            ObjectCeans SelectedItem = (ObjectCeans)SeansDataGrid.SelectedItem;
+            int CountSeat = DataBase.Halls.Where(x => SelectedItem.HallNumber == x.Id).Select(x => x.CountSeat).FirstOrDefault();
+            GenerateButton(CountSeat);
         }
     }
 }
