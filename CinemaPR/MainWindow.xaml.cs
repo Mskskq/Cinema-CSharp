@@ -26,7 +26,7 @@ namespace CinemaPR
             GenerateDataGridSeand();
         }
         CinemaContext DataBase = new CinemaContext();
-        private List<int> selectedSeats = new List<int>();
+        public List<int> selectedSeats = new List<int>();
 
         public void GenerateDataGridSeand()
         {
