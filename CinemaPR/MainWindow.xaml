@@ -6,12 +6,37 @@
         xmlns:local="clr-namespace:CinemaPR"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="1200" Loaded="Window_Loaded">
-    <Grid>
+    <Grid Background="#5646A8">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="211*"/>
-            <ColumnDefinition Width="989*"/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <DataGrid x:Name="SeansDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" Margin="28,27,627,265" Grid.ColumnSpan="2" SelectionChanged="SeansDataGrid_SelectionChanged">
+        <DataGrid x:Name="SeansDataGrid" AutoGenerateColumns="False" CanUserAddRows="False" Margin="28,61,627,29" SelectionChanged="SeansDataGrid_SelectionChanged"
+          Background="White"
+          BorderBrush="#FF1F44A9"
+          AlternatingRowBackground="#F4F5F7"
+          GridLinesVisibility="Horizontal"
+          HorizontalGridLinesBrush="#FF4E85EB">
+
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="#1F44A9"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Padding" Value="5"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+
+            <!-- Цвет выделения строки (Светло-синий) -->
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="#FF4E85EB"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.CellStyle>
+
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Название фильма" Binding="{Binding FilmName}" Width="*"/>
                 <DataGridTextColumn Header="Длина (мин)" Binding="{Binding Length}" Width="100"/>
@@ -21,10 +46,22 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <Border BorderBrush="Black" BorderThickness="2" CornerRadius="5" Margin="423,10,72,265" Grid.Column="1">
+        <Border BorderBrush="Black" Background="#211E68" BorderThickness="0" CornerRadius="5" Margin="634,61,72,97">
             <!-- Кнопки программно добавляем именно в WrapPanel -->
             <WrapPanel x:Name="MyContainer" Margin="-2,0,-2,-2" />
         </Border>
+        <Button x:Name="ButtonTickets" Background="#211E68" Foreground="White" Content="Купить билет/ы" HorizontalAlignment="Left" Margin="634,504,0,0" VerticalAlignment="Top" Height="51" Width="494" Click="ButtonTickets_Click">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+
+        <Label Content="Выберите сеанса для покупки билета"  FontSize="18"  HorizontalAlignment="Left" Margin="28,17,0,0" VerticalAlignment="Top" Foreground="White"/>
+        <Label Content="Выберите масто/а для просмотра" FontSize="18" HorizontalAlignment="Left" Margin="634,17,0,0" VerticalAlignment="Top" Foreground="White"/>
 
     </Grid>
 </Window>
